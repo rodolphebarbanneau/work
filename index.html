@@ -104,6 +104,7 @@
             display: flex;
             justify-content: between;
             align-items: center;
+            position: sticky;
             top: 0;
             z-index: 50;
         }
@@ -185,6 +186,7 @@
             max-width: 1400px;
             margin: 0 auto;
             width: 100%;
+            overflow-x: hidden;
         }
 
         /* Sheet/Sidebar */
@@ -214,20 +216,10 @@
 
         .content-area {
             flex: 1;
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            transition: grid-template-columns 0.3s ease;
+            display: flex;
+            flex-direction: column;
             min-width: 0;
-        }
-
-        .content-area.sheet-collapsed {
-            grid-template-columns: 1fr 350px;
-        }
-
-        .schedule-section {
-            background: hsl(var(--card));
-            border-right: 1px solid hsl(var(--border));
-            padding: 1.5rem;
+            overflow-x: hidden;
         }
 
         .timer-section {
@@ -235,6 +227,18 @@
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
+            flex-shrink: 0;
+            border-bottom: 1px solid hsl(var(--border));
+            order: 1;
+        }
+
+        .schedule-section {
+            background: hsl(var(--card));
+            padding: 1.5rem;
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            order: 2;
         }
 
         .section-title {
@@ -634,38 +638,157 @@
             opacity: 1;
         }
 
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .content-area {
-                grid-template-columns: 1fr;
-            }
-            
-            .timer-section {
-                border-right: none;
-                border-top: 1px solid hsl(var(--border));
-            }
+        /* Collapsible sections */
+        .collapsible-header {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid hsl(var(--border));
+            user-select: none;
         }
 
-        @media (max-width: 768px) {
-            .config-sheet {
-                position: fixed;
-                top: 0;
-                left: 0;
-                height: 100vh;
-                z-index: 40;
-                box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-            }
+        .collapsible-header:hover {
+            background: hsl(var(--accent) / 0.5);
+            margin: 0 -0.5rem 0.5rem -0.5rem;
+            padding: 0.5rem;
+        }
 
+        .collapsible-content {
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .collapsible-content.collapsed {
+            max-height: 0;
+        }
+
+        .collapsible-content:not(.collapsed) {
+            max-height: 500px;
+        }
+
+        .collapse-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .collapse-icon.rotated {
+            transform: rotate(180deg);
+        }
+
+        /* Responsive Design - Mobile First */
+        /* Small screens: sm (576px+) and md (768px+) use stacked layout */
+        /* Large screens: lg (992px+) and xl (1200px+) use side-by-side layout */
+        
+        /* Default: Mobile and Small/Medium screens - Vertical Stack */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            overflow-x: hidden;
+        }
+
+        .timer-section {
+            background: hsl(var(--card));
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            border-bottom: 1px solid hsl(var(--border));
+            order: 1;
+        }
+
+        .schedule-section {
+            background: hsl(var(--card));
+            padding: 1.5rem;
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            order: 2;
+        }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 576px) {
+            .header {
+                padding: 0.75rem 1rem;
+            }
+            
             .header-title {
-                font-size: 1.25rem;
+                font-size: 1.125rem;
             }
 
             .header-subtitle {
                 display: none;
             }
-
+            
+            .timer-section, .schedule-section {
+                padding: 1rem;
+            }
+            
+            .timer-display {
+                padding: 1rem;
+            }
+            
             .current-time {
-                font-size: 1.5rem;
+                font-size: 1.25rem;
+            }
+            
+            .btn {
+                min-height: 44px;
+                padding: 0.75rem 1rem;
+            }
+            
+            .form-input {
+                font-size: 16px;
+                padding: 0.75rem;
+            }
+            
+            .config-sheet {
+                position: fixed;
+                top: 65px;
+                left: 0;
+                height: calc(100vh - 65px);
+                z-index: 40;
+                box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            }
+        }
+
+        /* Small to Medium screens - Keep stacked layout */
+        @media (min-width: 576px) and (max-width: 991px) {
+            .header-title {
+                font-size: 1.25rem;
+            }
+            
+            .config-sheet {
+                position: fixed;
+                top: 73px;
+                left: 0;
+                height: calc(100vh - 73px);
+                z-index: 40;
+                box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            }
+        }
+
+        /* Large screens and up - Side by side layout */
+        @media (min-width: 992px) {
+            .content-area {
+                flex-direction: row;
+            }
+            
+            .timer-section {
+                width: 350px;
+                flex-shrink: 0;
+                border-bottom: none;
+                border-left: 1px solid hsl(var(--border));
+                order: 2;
+            }
+            
+            .schedule-section {
+                border-bottom: none;
+                flex: 1;
+                order: 1;
             }
         }
     </style>
@@ -766,6 +889,11 @@
                 <line x1="18" y1="20" x2="18" y2="10" stroke="currentColor" stroke-width="2"/>
                 <line x1="12" y1="20" x2="12" y2="4" stroke="currentColor" stroke-width="2"/>
                 <line x1="6" y1="20" x2="6" y2="14" stroke="currentColor" stroke-width="2"/>
+            </symbol>
+            
+            <!-- Chevron Down Icon -->
+            <symbol id="icon-chevron-down" viewBox="0 0 24 24">
+                <polyline points="6,9 12,15 18,9" stroke="currentColor" stroke-width="2" fill="none"/>
             </symbol>
         </defs>
     </svg>
@@ -897,54 +1025,69 @@
                             </svg>
                             Complete Activity
                         </button>
-                        <button class="btn btn-outline" onclick="skipActivity()" id="skip-btn">
-                            <svg class="icon">
-                                <use href="#icon-skip-forward"></use>
-                            </svg>
-                            Skip Current
-                        </button>
-                        <button class="btn btn-outline" onclick="goToPreviousActivity()" id="previous-btn">
-                            <svg class="icon">
-                                <use href="#icon-skip-back"></use>
-                            </svg>
-                            Previous
-                        </button>
-                        <button class="btn btn-outline" onclick="restartCurrentActivity()" id="restart-btn">
-                            <svg class="icon">
-                                <use href="#icon-refresh"></use>
-                            </svg>
-                            Restart
-                        </button>
-                        <button class="btn btn-secondary" id="sound-toggle" onclick="toggleSound()">
-                            <svg class="icon" id="sound-icon">
-                                <use href="#icon-volume-on"></use>
-                            </svg>
-                            Sound On
-                        </button>
                     </div>
 
-                    <div class="stats" id="schedule-stats" style="display: none;">
-                        <h4>
-                            <svg class="icon icon-sm">
-                                <use href="#icon-chart"></use>
-                            </svg>
-                            Schedule Summary
-                        </h4>
-                        <div class="stat-item">
-                            <span>Total Work Time:</span>
-                            <span id="total-work">-</span>
+                    <!-- Collapsible Actions -->
+                    <div class="collapsible-header" onclick="toggleCollapsible('actions-section')">
+                        <span style="font-size: 0.875rem; font-weight: 600;">Additional Actions</span>
+                        <svg class="icon collapse-icon" id="actions-icon">
+                            <use href="#icon-chevron-down"></use>
+                        </svg>
+                    </div>
+                    <div class="collapsible-content collapsed" id="actions-section">
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <button class="btn btn-outline" onclick="skipActivity()" id="skip-btn">
+                                <svg class="icon">
+                                    <use href="#icon-skip-forward"></use>
+                                </svg>
+                                Skip Current
+                            </button>
+                            <button class="btn btn-outline" onclick="goToPreviousActivity()" id="previous-btn">
+                                <svg class="icon">
+                                    <use href="#icon-skip-back"></use>
+                                </svg>
+                                Previous
+                            </button>
+                            <button class="btn btn-outline" onclick="restartCurrentActivity()" id="restart-btn">
+                                <svg class="icon">
+                                    <use href="#icon-refresh"></use>
+                                </svg>
+                                Restart
+                            </button>
+                            <button class="btn btn-secondary" id="sound-toggle" onclick="toggleSound()">
+                                <svg class="icon" id="sound-icon">
+                                    <use href="#icon-volume-on"></use>
+                                </svg>
+                                Sound On
+                            </button>
                         </div>
-                        <div class="stat-item">
-                            <span>Total Break Time:</span>
-                            <span id="total-break">-</span>
-                        </div>
-                        <div class="stat-item">
-                            <span>Total Physical Activity:</span>
-                            <span id="total-exercise">-</span>
-                        </div>
-                        <div class="stat-item">
-                            <span>Total Duration:</span>
-                            <span id="total-duration">-</span>
+                    </div>
+
+                    <!-- Collapsible Stats -->
+                    <div class="collapsible-header" onclick="toggleCollapsible('stats-section')" id="stats-header" style="display: none;">
+                        <span style="font-size: 0.875rem; font-weight: 600;">Schedule Summary</span>
+                        <svg class="icon collapse-icon" id="stats-icon">
+                            <use href="#icon-chevron-down"></use>
+                        </svg>
+                    </div>
+                    <div class="collapsible-content collapsed" id="stats-section">
+                        <div class="stats" id="schedule-stats">
+                            <div class="stat-item">
+                                <span>Total Work Time:</span>
+                                <span id="total-work">-</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Total Break Time:</span>
+                                <span id="total-break">-</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Total Physical Activity:</span>
+                                <span id="total-exercise">-</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Total Duration:</span>
+                                <span id="total-duration">-</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1026,6 +1169,49 @@
                 };
             }
 
+            getCurrentActivity() {
+                return this.state.hasSchedule && this.state.currentActivityIndex >= 0 && 
+                       this.state.currentActivityIndex < this.activities.length ? 
+                       this.activities[this.state.currentActivityIndex] : null;
+            }
+
+            calculateElapsedTime() {
+                if (!this.state.startTime) return 0;
+                return this.state.elapsedSeconds + Math.floor((new Date() - this.state.startTime) / 1000);
+            }
+
+            resetTimerState() {
+                this.state.elapsedSeconds = 0;
+                this.state.warningPlayed = false;
+                this.state.completionSoundPlayed = false;
+                this.state.pausedTime = null;
+            }
+
+            navigateToActivity(newIndex, action = 'moved to') {
+                if (!this.validateScheduleExists()) return;
+                
+                if (this.state.isRunning) {
+                    this.showNotification('Pause the timer before navigating!', 'warning');
+                    return;
+                }
+
+                if (newIndex >= 0 && newIndex < this.activities.length) {
+                    this.state.currentActivityIndex = newIndex;
+                    this.resetActivityState();
+                    this.state.startTime = null;
+                    this.recomputeScheduleTimes();
+                    this.updateButtonStates();
+                    this.scrollToCurrentActivity();
+                    
+                    const activity = this.activities[this.state.currentActivityIndex];
+                    this.showNotification(`${action.charAt(0).toUpperCase() + action.slice(1)}: ${activity.name}`, 
+                        action.includes('skip') ? 'warning' : 'success');
+                    this.playActivitySound(activity.type);
+                    return true;
+                }
+                return false;
+            }
+
             updateButtonIcon(buttonId, iconId) {
                 const icon = document.getElementById(buttonId).querySelector('use');
                 if (icon) icon.setAttribute('href', iconId);
@@ -1095,13 +1281,12 @@
                 const hasActivities = this.activities.length > 0;
                 const canGoBack = hasSchedule && this.state.currentActivityIndex > 0;
                 const isLastActivity = hasSchedule && this.state.currentActivityIndex >= this.activities.length - 1;
-                const currentActivity = hasSchedule ? this.activities[this.state.currentActivityIndex] : null;
+                const currentActivity = this.getCurrentActivity();
                 
                 let canCompleteByTime = false;
-                if (isRunning && this.state.startTime && currentActivity) {
-                    const elapsed = this.state.elapsedSeconds + Math.floor((new Date() - this.state.startTime) / 1000);
-                    const total = currentActivity.duration * 60;
-                    const remaining = total - elapsed;
+                if (isRunning && currentActivity) {
+                    const elapsed = this.calculateElapsedTime();
+                    const remaining = currentActivity.duration * 60 - elapsed;
                     canCompleteByTime = remaining <= 30;
                 }
                 
@@ -1111,7 +1296,7 @@
                 // Timer button
                 if (!hasSchedule) {
                     this.updateButtonState('timer-btn', 'btn-success', '#icon-play', ' Start Routine', true);
-                } else if (isRunning) {
+                } else if (isRunning && this.state.startTime) {
                     this.updateButtonState('timer-btn', 'btn-warning', '#icon-pause', ' Pause Routine');
                 } else {
                     const text = this.state.elapsedSeconds > 0 ? ' Resume Routine' : ' Start Routine';
@@ -1120,9 +1305,9 @@
 
                 // Control buttons
                 document.getElementById('complete-btn').disabled = !canComplete;
-                document.getElementById('skip-btn').disabled = !hasSchedule || isLastActivity || isRunning; // Can't skip while running
-                document.getElementById('previous-btn').disabled = !canGoBack || isRunning; // Can't go back while running
-                document.getElementById('restart-btn').disabled = !hasSchedule || isRunning; // Can't restart while running
+                document.getElementById('skip-btn').disabled = !hasSchedule || isLastActivity || isRunning;
+                document.getElementById('previous-btn').disabled = !canGoBack || isRunning;
+                document.getElementById('restart-btn').disabled = !hasSchedule || isRunning;
             }
 
             // SCHEDULE GENERATION
@@ -1257,6 +1442,7 @@
                 document.getElementById('total-exercise').textContent = formatTime(workoutMinutes);
                 document.getElementById('total-duration').textContent = formatTime(totalDuration);
                 document.getElementById('schedule-stats').style.display = 'block';
+                document.getElementById('stats-header').style.display = 'flex';
             }
 
             formatTime(date) {
@@ -1308,10 +1494,21 @@
                 
                 setTimeout(() => {
                     const currentActivityElement = document.getElementById(`activity-${this.state.currentActivityIndex}`);
-                    if (currentActivityElement) {
-                        currentActivityElement.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
+                    const scheduleContainer = document.getElementById('schedule-container');
+                    
+                    if (currentActivityElement && scheduleContainer) {
+                        // Calculate the position of the current activity relative to the container
+                        const containerRect = scheduleContainer.getBoundingClientRect();
+                        const elementRect = currentActivityElement.getBoundingClientRect();
+                        
+                        // Calculate scroll position to put the active task at the top with small offset
+                        const currentScrollTop = scheduleContainer.scrollTop;
+                        const elementOffsetFromContainerTop = elementRect.top - containerRect.top;
+                        const targetScrollTop = currentScrollTop + elementOffsetFromContainerTop - 10;
+                        
+                        scheduleContainer.scrollTo({
+                            top: Math.max(0, targetScrollTop), // Don't scroll to negative values
+                            behavior: 'smooth'
                         });
                     }
                 }, delay);
@@ -1333,13 +1530,13 @@
 
             updateCountdown() {
                 const now = new Date();
-                const currentActivity = this.activities[this.state.currentActivityIndex];
+                const currentActivity = this.getCurrentActivity();
                 
                 if (!currentActivity || !this.state.startTime) return;
                 
                 document.getElementById('next-activity').textContent = `Current: ${currentActivity.name}`;
                 
-                const elapsed = this.state.elapsedSeconds + Math.floor((now - this.state.startTime) / 1000);
+                const elapsed = this.calculateElapsedTime();
                 const total = currentActivity.duration * 60;
                 const remaining = total - elapsed;
                 
@@ -1347,7 +1544,6 @@
                 const progress = Math.min(100, (elapsed / total) * 100);
                 document.getElementById('progress-fill').style.width = `${progress}%`;
                 
-                // Update button states in real-time (especially complete button)
                 this.updateButtonStates();
                 
                 // Warning at 30 seconds
@@ -1369,17 +1565,13 @@
                         this.state.completionSoundPlayed = true;
                     }
                     
-                    // Check if next activity is auto-advance (recovery break)
-                    const nextActivityIndex = this.state.currentActivityIndex + 1;
-                    const nextActivity = this.activities[nextActivityIndex];
+                    const nextActivity = this.activities[this.state.currentActivityIndex + 1];
                     
                     if (nextActivity && nextActivity.autoAdvance) {
-                        // Auto-advance immediately for recovery breaks
                         if (remaining <= -2) {
                             this.moveToNextActivity();
                         }
                     } else {
-                        // Auto-advance after 30 seconds for regular activities
                         if (remaining < -30) {
                             this.moveToNextActivity();
                         }
@@ -1431,27 +1623,20 @@
                 const now = new Date();
                 let currentTime;
                 
-                // Determine the starting point for time calculations
                 if (this.state.isRunning && this.state.startTime) {
-                    // If timer is running, calculate current activity's remaining time
-                    const elapsed = this.state.elapsedSeconds + Math.floor((now - this.state.startTime) / 1000);
-                    const currentActivity = this.activities[this.state.currentActivityIndex];
+                    const elapsed = this.calculateElapsedTime();
+                    const currentActivity = this.getCurrentActivity();
                     const remaining = Math.max(0, currentActivity.duration * 60 - elapsed);
-                    
-                    // Current activity ends at now + remaining time
                     currentTime = new Date(now.getTime() + remaining * 1000);
                 } else {
-                    // If timer is not running, start from now
                     currentTime = new Date(now);
                     
-                    // Update current activity time if it hasn't started yet
                     if (this.state.currentActivityIndex < this.activities.length) {
                         this.activities[this.state.currentActivityIndex].time = this.formatTime(currentTime);
                         currentTime.setMinutes(currentTime.getMinutes() + this.activities[this.state.currentActivityIndex].duration);
                     }
                 }
                 
-                // Update all future activities
                 for (let i = this.state.currentActivityIndex + 1; i < this.activities.length; i++) {
                     this.activities[i].time = this.formatTime(currentTime);
                     currentTime.setMinutes(currentTime.getMinutes() + this.activities[i].duration);
@@ -1532,7 +1717,7 @@
             markComplete() {
                 if (!this.validateScheduleExists()) return;
 
-                const currentActivity = this.activities[this.state.currentActivityIndex];
+                const currentActivity = this.getCurrentActivity();
                 if (currentActivity && currentActivity.autoAdvance) {
                     this.moveToNextActivity();
                     return;
@@ -1550,40 +1735,15 @@
                 }
                 
                 if (this.state.currentActivityIndex < this.activities.length - 1) {
-                    this.state.currentActivityIndex++;
-                    this.resetActivityState();
-                    this.state.startTime = null;
-                    this.recomputeScheduleTimes();
-                    this.updateButtonStates();
-                    this.scrollToCurrentActivity();
-                    
-                    const activity = this.activities[this.state.currentActivityIndex];
-                    this.showNotification(`Skipped to: ${activity.name}`, 'warning');
-                    this.playActivitySound(activity.type);
+                    this.navigateToActivity(this.state.currentActivityIndex + 1, 'skipped to');
                 } else {
                     this.showNotification('Cannot skip - already at the last activity!', 'warning');
                 }
             }
 
             goToPreviousActivity() {
-                if (!this.validateScheduleExists()) return;
-
-                if (this.state.isRunning) {
-                    this.showNotification('Pause the timer before navigating!', 'warning');
-                    return;
-                }
-
                 if (this.state.currentActivityIndex > 0) {
-                    this.state.currentActivityIndex--;
-                    this.resetActivityState();
-                    this.state.startTime = null;
-                    this.recomputeScheduleTimes();
-                    this.updateButtonStates();
-                    this.scrollToCurrentActivity();
-                    
-                    const activity = this.activities[this.state.currentActivityIndex];
-                    this.showNotification(`Moved to: ${activity.name}`, 'success');
-                    this.playActivitySound(activity.type);
+                    this.navigateToActivity(this.state.currentActivityIndex - 1, 'moved to');
                 } else {
                     this.showNotification('Already at the start of the schedule!', 'warning');
                 }
@@ -1603,34 +1763,14 @@
                     this.recomputeScheduleTimes();
                     this.scrollToCurrentActivity();
                     
-                    const activity = this.activities[this.state.currentActivityIndex];
+                    const activity = this.getCurrentActivity();
                     this.showNotification(`Reset: ${activity.name}`, 'success');
                     this.playActivitySound(activity.type);
-                } else {
-                    this.showNotification('Invalid activity!', 'error');
                 }
             }
 
             jumpToActivity(index) {
-                if (!this.validateScheduleExists()) return;
-
-                if (this.state.isRunning) {
-                    this.showNotification('Pause the timer before jumping to activities!', 'warning');
-                    return;
-                }
-
-                if (index >= 0 && index < this.activities.length) {
-                    this.state.currentActivityIndex = index;
-                    this.resetActivityState();
-                    this.state.startTime = null;
-                    this.recomputeScheduleTimes();
-                    this.updateButtonStates();
-                    this.scrollToCurrentActivity();
-                    
-                    const activity = this.activities[this.state.currentActivityIndex];
-                    this.showNotification(`Jumped to: ${activity.name}`, 'success');
-                    this.playActivitySound(activity.type);
-                }
+                this.navigateToActivity(index, 'jumped to');
             }
 
             toggleSound() {
@@ -1762,13 +1902,31 @@
         }
 
         // Global function wrappers
-        function generateSchedule() { planner.generateSchedule(); }
+        function generateSchedule() { 
+            planner.generateSchedule(); 
+            // Auto-collapse config sheet after generating for ALL screen sizes
+            const sheet = document.getElementById('config-sheet');
+            if (!sheet.classList.contains('collapsed')) {
+                toggleConfigSheet();
+            }
+        }
+        
         function toggleTimer() { planner.toggleTimer(); }
         function markComplete() { planner.markComplete(); }
         function skipActivity() { planner.skipActivity(); }
         function goToPreviousActivity() { planner.goToPreviousActivity(); }
         function restartCurrentActivity() { planner.restartCurrentActivity(); }
         function toggleSound() { planner.toggleSound(); }
+
+        // Collapsible functionality
+        function toggleCollapsible(sectionId) {
+            const content = document.getElementById(sectionId);
+            const iconId = sectionId.replace('-section', '-icon');
+            const icon = document.getElementById(iconId);
+            
+            content.classList.toggle('collapsed');
+            icon.classList.toggle('rotated');
+        }
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
