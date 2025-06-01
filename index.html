@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Developer Health Planner</title>
+    <style>
+        :root {
+            /* Light theme colors */
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+            --popover: 0 0% 100%;
+            --popover-foreground: 222.2 84% 4.9%;
+            --primary: 221.2 83.2% 53.3%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 210 40% 96%;
+            --secondary-foreground: 222.2 84% 4.9%;
+            --muted: 210 40% 96%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --accent: 210 40% 96%;
+            --accent-foreground: 222.2 84% 4.9%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 214.3 31.8% 91.4%;
+            --input: 214.3 31.8% 91.4%;
+            --ring: 221.2 83.2% 53.3%;
+            --success: 142.1 76.2% 36.3%;
+            --warning: 47.9 95.8% 53.1%;
+            --info: 199.89 89.09% 48.04%;
+        }
+
+        [data-theme="dark"] {
+            /* Dark theme colors */
+            --background: 222.2 84% 4.9%;
+            --foreground: 210 40% 98%;
+            --card: 222.2 84% 4.9%;
+            --card-foreground: 210 40% 98%;
+            --popover: 222.2 84% 4.9%;
+            --popover-foreground: 210 40% 98%;
+            --primary: 217.2 91.2% 59.8%;
+            --primary-foreground: 222.2 84% 4.9%;
+            --secondary: 217.2 32.6% 17.5%;
+            --secondary-foreground: 210 40% 98%;
+            --muted: 217.2 32.6% 17.5%;
+            --muted-foreground: 215 20.2% 65.1%;
+            --accent: 217.2 32.6% 17.5%;
+            --accent-foreground: 210 40% 98%;
+            --destructive: 0 62.8% 30.6%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 217.2 32.6% 17.5%;
+            --input: 217.2 32.6% 17.5%;
+            --ring: 224.3 76.3% 94.1%;
+            --success: 142.1 70.6% 45.3%;
+            --warning: 47.9 95.8% 53.1%;
+            --info: 199.89 89.09% 48.04%;
+        }
+
+        /* Icon System */
+        .icon {
+            width: 1rem;
+            height: 1rem;
+            display: inline-block;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        .icon-sm {
+            width: 0.875rem;
+            height: 0.875rem;
+        }
+
+        .icon-lg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: hsl(var(--background));
+            color: hsl(var(--foreground));
+            line-height: 1.5;
+            min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            border-bottom: 1px solid hsl(var(--border));
+            background: hsl(var(--card));
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: hsl(var(--foreground));
+        }
+
+        .header-subtitle {
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+            margin-left: 0.5rem;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .theme-toggle {
+            background: hsl(var(--secondary));
+            border: 1px solid hsl(var(--border));
+            color: hsl(var(--secondary-foreground));
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            background: hsl(var(--accent));
+        }
+
+        .sheet-toggle {
+            background: hsl(var(--secondary));
+            border: 1px solid hsl(var(--border));
+            color: hsl(var(--secondary-foreground));
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sheet-toggle:hover {
+            background: hsl(var(--accent));
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Sheet/Sidebar */
+        .config-sheet {
+            width: 350px;
+            background: hsl(var(--card));
+            border-right: 1px solid hsl(var(--border));
+            transition: transform 0.3s ease, width 0.3s ease;
+            transform: translateX(0);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .config-sheet.collapsed {
+            transform: translateX(-350px);
+            width: 0;
+            border-right: none;
+        }
+
+        .config-content {
+            padding: 1.5rem;
+            height: 100%;
+            overflow-y: auto;
+            width: 350px;
+            flex-shrink: 0;
+        }
+
+        .content-area {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            transition: grid-template-columns 0.3s ease;
+            min-width: 0;
+        }
+
+        .content-area.sheet-collapsed {
+            grid-template-columns: 1fr 350px;
+        }
+
+        .schedule-section {
+            background: hsl(var(--card));
+            border-right: 1px solid hsl(var(--border));
+            padding: 1.5rem;
+        }
+
+        .timer-section {
+            background: hsl(var(--card));
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            margin-bottom: 1rem;
+            border-bottom: 1px solid hsl(var(--border));
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: hsl(var(--foreground));
+            font-size: 0.875rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid hsl(var(--border));
+            background: hsl(var(--background));
+            color: hsl(var(--foreground));
+            font-size: 0.875rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: hsl(var(--ring));
+            box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
+        }
+
+        .form-help {
+            display: block;
+            margin-top: 0.25rem;
+            color: hsl(var(--muted-foreground));
+            font-size: 0.75rem;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid transparent;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            border-color: hsl(var(--primary));
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: hsl(var(--primary) / 0.9);
+        }
+
+        .btn-secondary {
+            background: hsl(var(--secondary));
+            color: hsl(var(--secondary-foreground));
+            border-color: hsl(var(--border));
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: hsl(var(--accent));
+        }
+
+        .btn-success {
+            background: hsl(var(--success));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: hsl(var(--success) / 0.9);
+        }
+
+        .btn-warning {
+            background: hsl(var(--warning));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            background: hsl(var(--warning) / 0.9);
+        }
+
+        .btn-info {
+            background: hsl(var(--info));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .btn-info:hover:not(:disabled) {
+            background: hsl(var(--info) / 0.9);
+        }
+
+        .btn-destructive {
+            background: hsl(var(--destructive));
+            color: hsl(var(--destructive-foreground));
+        }
+
+        .btn-destructive:hover:not(:disabled) {
+            background: hsl(var(--destructive) / 0.9);
+        }
+
+        /* Outlined Button Variants */
+        .btn-outline {
+            background: transparent;
+            border-color: hsl(var(--border));
+            color: hsl(var(--foreground));
+        }
+
+        .btn-outline:hover:not(:disabled) {
+            background: hsl(var(--accent));
+        }
+
+        .btn-outline-primary {
+            background: transparent;
+            border-color: hsl(var(--primary));
+            color: hsl(var(--primary));
+        }
+
+        .btn-outline-primary:hover:not(:disabled) {
+            background: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .btn-outline-secondary {
+            background: transparent;
+            border-color: hsl(var(--muted-foreground));
+            color: hsl(var(--muted-foreground));
+        }
+
+        .btn-outline-secondary:hover:not(:disabled) {
+            background: hsl(var(--secondary));
+            color: hsl(var(--secondary-foreground));
+        }
+
+        /* Schedule Styles */
+        .schedule-container {
+            height: calc(100vh - 200px);
+            overflow-y: auto;
+            padding-right: 0.5rem;
+            scroll-behavior: smooth;
+        }
+
+        .schedule-container::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .schedule-container::-webkit-scrollbar-track {
+            background: hsl(var(--muted));
+        }
+
+        .schedule-container::-webkit-scrollbar-thumb {
+            background: hsl(var(--muted-foreground) / 0.3);
+        }
+
+        .schedule-container::-webkit-scrollbar-thumb:hover {
+            background: hsl(var(--muted-foreground) / 0.5);
+        }
+
+        .schedule-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: hsl(var(--muted) / 0.5);
+            border-left: 3px solid hsl(var(--border));
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .schedule-item:hover {
+            background: hsl(var(--accent));
+        }
+
+        .schedule-item.active {
+            background: hsl(var(--primary) / 0.1);
+            border-left-color: hsl(var(--primary));
+        }
+
+        .schedule-item.completed {
+            opacity: 0.6;
+            background: hsl(var(--success) / 0.1);
+            border-left-color: hsl(var(--success));
+        }
+
+        .schedule-item.work { border-left-color: hsl(var(--primary)); }
+        .schedule-item.break { border-left-color: hsl(var(--success)); }
+        .schedule-item.exercise { border-left-color: hsl(var(--warning)); }
+        .schedule-item.intensive { border-left-color: hsl(var(--destructive)); }
+
+        .activity-info {
+            flex: 1;
+            min-width: 0;
+            margin-right: 1rem;
+        }
+
+        .activity-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+            color: hsl(var(--foreground));
+        }
+
+        .activity-description {
+            color: hsl(var(--muted-foreground));
+            font-size: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .activity-time-info {
+            flex-shrink: 0;
+            text-align: right;
+            min-width: 60px;
+        }
+
+        .activity-time {
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            font-size: 0.875rem;
+        }
+
+        .activity-duration {
+            font-size: 0.75rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        /* Timer Styles */
+        .timer-display {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: hsl(var(--muted) / 0.5);
+            border: 1px solid hsl(var(--border));
+        }
+
+        .current-time {
+            font-size: 2rem;
+            font-weight: 700;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.5rem;
+            font-feature-settings: "tnum";
+        }
+
+        .next-activity {
+            font-size: 1rem;
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 1rem;
+        }
+
+        .countdown {
+            font-size: 1.5rem;
+            color: hsl(var(--destructive));
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-feature-settings: "tnum";
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: hsl(var(--muted));
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: hsl(var(--primary));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Stats */
+        .stats {
+            background: hsl(var(--muted) / 0.5);
+            padding: 1rem;
+            border: 1px solid hsl(var(--border));
+        }
+
+        .stats h4 {
+            color: hsl(var(--foreground));
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .stat-item span:first-child {
+            color: hsl(var(--muted-foreground));
+        }
+
+        .stat-item span:last-child {
+            color: hsl(var(--foreground));
+            font-weight: 500;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 350px;
+            backdrop-filter: blur(8px);
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: hsl(var(--success));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .notification.warning {
+            background: hsl(var(--warning));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .notification.error {
+            background: hsl(var(--destructive));
+            color: hsl(var(--destructive-foreground));
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            padding: 0.25rem;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .notification-close:hover {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .content-area {
+                grid-template-columns: 1fr;
+            }
+            
+            .timer-section {
+                border-right: none;
+                border-top: 1px solid hsl(var(--border));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .config-sheet {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 40;
+                box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            }
+
+            .header-title {
+                font-size: 1.25rem;
+            }
+
+            .header-subtitle {
+                display: none;
+            }
+
+            .current-time {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SVG Icon Definitions -->
+    <svg style="display: none;">
+        <defs>
+            <!-- Menu/Hamburger Icon -->
+            <symbol id="icon-menu" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M3 6h18M3 12h18M3 18h18"/>
+            </symbol>
+            
+            <!-- Close X Icon -->
+            <symbol id="icon-close" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M18 6L6 18M6 6l12 12"/>
+            </symbol>
+            
+            <!-- Theme Icons -->
+            <symbol id="icon-sun" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" fill="none"/>
+                <path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            </symbol>
+            
+            <symbol id="icon-moon" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </symbol>
+            
+            <symbol id="icon-computer" viewBox="0 0 24 24">
+                <rect x="2" y="4" width="20" height="12" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                <path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M8 21h8m-4-5v5"/>
+            </symbol>
+            
+            <!-- Play/Pause Icons -->
+            <symbol id="icon-play" viewBox="0 0 24 24">
+                <polygon points="5,3 19,12 5,21" fill="currentColor"/>
+            </symbol>
+            
+            <symbol id="icon-pause" viewBox="0 0 24 24">
+                <rect x="6" y="4" width="4" height="16" fill="currentColor"/>
+                <rect x="14" y="4" width="4" height="16" fill="currentColor"/>
+            </symbol>
+            
+            <!-- Control Icons -->
+            <symbol id="icon-skip-forward" viewBox="0 0 24 24">
+                <polygon points="5,4 15,12 5,20" fill="currentColor"/>
+                <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2"/>
+            </symbol>
+            
+            <symbol id="icon-skip-back" viewBox="0 0 24 24">
+                <polygon points="19,20 9,12 19,4" fill="currentColor"/>
+                <line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2"/>
+            </symbol>
+            
+            <symbol id="icon-refresh" viewBox="0 0 24 24">
+                <polyline points="23,4 23,10 17,10" stroke="currentColor" stroke-width="2" fill="none"/>
+                <polyline points="1,20 1,14 7,14" stroke="currentColor" stroke-width="2" fill="none"/>
+                <path stroke="currentColor" stroke-width="2" fill="none" d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+            </symbol>
+            
+            <!-- Audio Icons -->
+            <symbol id="icon-volume-on" viewBox="0 0 24 24">
+                <polygon points="11,5 6,9 2,9 2,15 6,15 11,19" fill="currentColor"/>
+                <path stroke="currentColor" stroke-width="2" fill="none" d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            </symbol>
+            
+            <symbol id="icon-volume-off" viewBox="0 0 24 24">
+                <polygon points="11,5 6,9 2,9 2,15 6,15 11,19" fill="currentColor"/>
+                <line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" stroke-width="2"/>
+                <line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" stroke-width="2"/>
+            </symbol>
+            
+            <!-- Section Icons -->
+            <symbol id="icon-settings" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"/>
+                <path stroke="currentColor" stroke-width="2" fill="none" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </symbol>
+            
+            <symbol id="icon-calendar" viewBox="0 0 24 24">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" stroke-width="2"/>
+                <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" stroke-width="2"/>
+                <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2"/>
+            </symbol>
+            
+            <symbol id="icon-clock" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+                <polyline points="12,6 12,12 16,14" stroke="currentColor" stroke-width="2" fill="none"/>
+            </symbol>
+            
+            <!-- Check Icon -->
+            <symbol id="icon-check" viewBox="0 0 24 24">
+                <polyline points="20,6 9,17 4,12" stroke="currentColor" stroke-width="2" fill="none"/>
+            </symbol>
+            
+            <!-- Stats Icon -->
+            <symbol id="icon-chart" viewBox="0 0 24 24">
+                <line x1="18" y1="20" x2="18" y2="10" stroke="currentColor" stroke-width="2"/>
+                <line x1="12" y1="20" x2="12" y2="4" stroke="currentColor" stroke-width="2"/>
+                <line x1="6" y1="20" x2="6" y2="14" stroke="currentColor" stroke-width="2"/>
+            </symbol>
+        </defs>
+    </svg>
+
+    <div class="app-container" data-theme="system">
+        <div class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <button class="sheet-toggle" onclick="toggleConfigSheet()" title="Toggle Configuration Panel">
+                        <svg class="icon" id="sheet-toggle-icon">
+                            <use href="#icon-menu"></use>
+                        </svg>
+                    </button>
+                    <div>
+                        <span class="header-title">🎯 Health Planner</span>
+                        <span class="header-subtitle">Intelligent Work-Life Balance</span>
+                    </div>
+                </div>
+                <div class="header-controls">
+                    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                        <svg class="icon" id="theme-icon">
+                            <use href="#icon-moon"></use>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Configuration Sheet -->
+            <div class="config-sheet" id="config-sheet">
+                <div class="config-content">
+                    <h2 class="section-title">
+                        <svg class="icon icon-lg">
+                            <use href="#icon-settings"></use>
+                        </svg>
+                        Configuration
+                    </h2>
+                    
+                    <div class="form-group">
+                        <label for="schedule-sessions" class="form-label">Number of Sessions</label>
+                        <input type="number" id="schedule-sessions" class="form-input" value="5" min="1" max="20">
+                        <small class="form-help">1 session = work block + break/workout</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="work-block" class="form-label">Work Block Duration (minutes)</label>
+                        <input type="number" id="work-block" class="form-input" value="45" min="30" max="90">
+                        <small class="form-help">Recommended: 45-60 minutes max</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rest-break" class="form-label">Rest Break Duration (minutes)</label>
+                        <input type="number" id="rest-break" class="form-input" value="5" min="3" max="15">
+                        <small class="form-help">Pure rest and hydration time</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="stretch-break" class="form-label">Stretch Break Duration (minutes)</label>
+                        <input type="number" id="stretch-break" class="form-input" value="5" min="3" max="15">
+                        <small class="form-help">Light stretching and posture relief</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exercise-break" class="form-label">Workout Break Duration (minutes)</label>
+                        <input type="number" id="exercise-break" class="form-input" value="15" min="10" max="25">
+                        <small class="form-help">Workout sessions</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="intensive-interval" class="form-label">Workout Every (sessions)</label>
+                        <input type="number" id="intensive-interval" class="form-input" value="2" min="1" max="5">
+                        <small class="form-help">How often to do workouts</small>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="generateSchedule()">
+                        <svg class="icon">
+                            <use href="#icon-refresh"></use>
+                        </svg>
+                        Generate Schedule
+                    </button>
+                </div>
+            </div>
+
+            <div class="content-area" id="content-area">
+                <!-- Schedule Panel -->
+                <div class="schedule-section">
+                    <h2 class="section-title">
+                        <svg class="icon icon-lg">
+                            <use href="#icon-calendar"></use>
+                        </svg>
+                        Schedule
+                    </h2>
+                    <div class="schedule-container" id="schedule-container">
+                        <div style="text-align: center; color: hsl(var(--muted-foreground)); padding: 2rem;">
+                            Configure your sessions and generate your personalized health routine.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timer Panel -->
+                <div class="timer-section">
+                    <h2 class="section-title">
+                        <svg class="icon icon-lg">
+                            <use href="#icon-clock"></use>
+                        </svg>
+                        Timer
+                    </h2>
+                    
+                    <div class="timer-display">
+                        <div class="current-time" id="current-time"></div>
+                        <div class="next-activity" id="next-activity">Generate schedule to start</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <div class="countdown" id="countdown">--:--</div>
+                    </div>
+                    
+                    <div class="controls">
+                        <button class="btn btn-success" id="timer-btn" onclick="toggleTimer()" disabled>
+                            <svg class="icon" id="timer-icon">
+                                <use href="#icon-play"></use>
+                            </svg>
+                            Start Routine
+                        </button>
+                        <button class="btn btn-success" onclick="markComplete()" id="complete-btn">
+                            <svg class="icon">
+                                <use href="#icon-check"></use>
+                            </svg>
+                            Complete Activity
+                        </button>
+                        <button class="btn btn-outline" onclick="skipActivity()" id="skip-btn">
+                            <svg class="icon">
+                                <use href="#icon-skip-forward"></use>
+                            </svg>
+                            Skip Current
+                        </button>
+                        <button class="btn btn-outline" onclick="goToPreviousActivity()" id="previous-btn">
+                            <svg class="icon">
+                                <use href="#icon-skip-back"></use>
+                            </svg>
+                            Previous
+                        </button>
+                        <button class="btn btn-outline" onclick="restartCurrentActivity()" id="restart-btn">
+                            <svg class="icon">
+                                <use href="#icon-refresh"></use>
+                            </svg>
+                            Restart
+                        </button>
+                        <button class="btn btn-secondary" id="sound-toggle" onclick="toggleSound()">
+                            <svg class="icon" id="sound-icon">
+                                <use href="#icon-volume-on"></use>
+                            </svg>
+                            Sound On
+                        </button>
+                    </div>
+
+                    <div class="stats" id="schedule-stats" style="display: none;">
+                        <h4>
+                            <svg class="icon icon-sm">
+                                <use href="#icon-chart"></use>
+                            </svg>
+                            Schedule Summary
+                        </h4>
+                        <div class="stat-item">
+                            <span>Total Work Time:</span>
+                            <span id="total-work">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Total Break Time:</span>
+                            <span id="total-break">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Total Physical Activity:</span>
+                            <span id="total-exercise">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Total Duration:</span>
+                            <span id="total-duration">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        class HealthPlanner {
+            constructor() {
+                this.state = {
+                    isRunning: false,
+                    currentActivityIndex: 0,
+                    startTime: null,
+                    pausedTime: null,
+                    elapsedSeconds: 0,
+                    warningPlayed: false,
+                    completionSoundPlayed: false,
+                    hasSchedule: false
+                };
+                
+                this.activities = [];
+                this.audioContext = null;
+                this.soundEnabled = true;
+                
+                this.config = {
+                    scheduleDuration: 4,
+                    workBlock: 50,
+                    restBreak: 5,
+                    stretchBreak: 5,
+                    exerciseBreak: 15,
+                    intensiveInterval: 2
+                };
+
+                this.exercises = {
+                    regular: [
+                        'Neck stretches (scalene focus)', 'Shoulder rolls and shrugs',
+                        'Upper trap stretches', 'Chin tucks for forward head posture',
+                        'Wrist and forearm stretches', 'Spinal twists (seated)',
+                        'Eye movement exercises', 'Deep breathing (diaphragmatic)'
+                    ],
+                    intensive: {
+                        strength: ['20 push-ups', '15 tricep dips', '10 pull-ups (or rows)', '15 burpees', '25 squats', '20 lunges (10 each leg)', '30 calf raises', '15 glute bridges'],
+                        core: ['30 crunches', '45-second plank', '20 Russian twists', '15 leg raises', '20 bicycle crunches', '30-second side plank (each side)', '15 mountain climbers'],
+                        cardio: ['30 jumping jacks', '20 high knees', '15 squat jumps', '45-second jog in place', '20 butt kicks', '10 star jumps', '30-second sprint in place'],
+                        flexibility: ['2-minute deep stretch', '3-minute yoga flow', '90-second breathing exercise', '2-minute meditation', '90-second neck/shoulder stretch']
+                    }
+                };
+
+                this.init();
+            }
+
+            init() {
+                this.setupAudio();
+                this.updateTime();
+                this.updateButtonStates();
+                setInterval(() => this.updateTime(), 1000);
+            }
+
+            setupAudio() {
+                try {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    console.log('Web Audio API not supported');
+                }
+            }
+
+            // UTILITY METHODS
+            getConfig() {
+                return {
+                    scheduleDuration: parseInt(document.getElementById('schedule-sessions').value),
+                    workBlock: parseInt(document.getElementById('work-block').value),
+                    restBreak: parseInt(document.getElementById('rest-break').value),
+                    stretchBreak: parseInt(document.getElementById('stretch-break').value),
+                    exerciseBreak: parseInt(document.getElementById('exercise-break').value),
+                    intensiveInterval: parseInt(document.getElementById('intensive-interval').value)
+                };
+            }
+
+            updateButtonIcon(buttonId, iconId) {
+                const icon = document.getElementById(buttonId).querySelector('use');
+                if (icon) icon.setAttribute('href', iconId);
+            }
+
+            updateButtonText(buttonId, text) {
+                const button = document.getElementById(buttonId);
+                const textNode = button.childNodes[button.childNodes.length - 1];
+                if (textNode.nodeType === Node.TEXT_NODE) {
+                    textNode.textContent = text;
+                }
+            }
+
+            updateButtonState(buttonId, className, iconId, text, disabled = false) {
+                const button = document.getElementById(buttonId);
+                button.className = `btn ${className}`;
+                button.disabled = disabled;
+                this.updateButtonIcon(buttonId, iconId);
+                this.updateButtonText(buttonId, text);
+            }
+
+            validateScheduleExists() {
+                if (!this.state.hasSchedule || this.activities.length === 0) {
+                    this.showNotification('Please generate a schedule first!', 'error');
+                    return false;
+                }
+                return true;
+            }
+
+            validateCurrentActivity() {
+                return this.state.currentActivityIndex >= 0 && this.state.currentActivityIndex < this.activities.length;
+            }
+
+            // STATE MANAGEMENT
+            resetState() {
+                this.state = {
+                    isRunning: false,
+                    currentActivityIndex: 0,
+                    startTime: null,
+                    pausedTime: null,
+                    elapsedSeconds: 0,
+                    warningPlayed: false,
+                    completionSoundPlayed: false,
+                    hasSchedule: false
+                };
+                this.updateButtonStates();
+            }
+
+            resetActivityState() {
+                this.state.elapsedSeconds = 0;
+                this.state.warningPlayed = false;
+                this.state.completionSoundPlayed = false;
+                this.state.pausedTime = null;
+            }
+
+            startActivityTimer() {
+                this.state.startTime = new Date();
+                this.state.elapsedSeconds = 0;
+                this.state.warningPlayed = false;
+                this.state.completionSoundPlayed = false;
+                this.state.pausedTime = null;
+            }
+
+            updateButtonStates() {
+                const hasSchedule = this.state.hasSchedule;
+                const isRunning = this.state.isRunning;
+                const hasActivities = this.activities.length > 0;
+                const canGoBack = hasSchedule && this.state.currentActivityIndex > 0;
+                const isLastActivity = hasSchedule && this.state.currentActivityIndex >= this.activities.length - 1;
+                const currentActivity = hasSchedule ? this.activities[this.state.currentActivityIndex] : null;
+                
+                let canCompleteByTime = false;
+                if (isRunning && this.state.startTime && currentActivity) {
+                    const elapsed = this.state.elapsedSeconds + Math.floor((new Date() - this.state.startTime) / 1000);
+                    const total = currentActivity.duration * 60;
+                    const remaining = total - elapsed;
+                    canCompleteByTime = remaining <= 30;
+                }
+                
+                const canComplete = hasSchedule && hasActivities && 
+                    (canCompleteByTime || (currentActivity && currentActivity.autoAdvance));
+
+                // Timer button
+                if (!hasSchedule) {
+                    this.updateButtonState('timer-btn', 'btn-success', '#icon-play', ' Start Routine', true);
+                } else if (isRunning) {
+                    this.updateButtonState('timer-btn', 'btn-warning', '#icon-pause', ' Pause Routine');
+                } else {
+                    const text = this.state.elapsedSeconds > 0 ? ' Resume Routine' : ' Start Routine';
+                    this.updateButtonState('timer-btn', 'btn-success', '#icon-play', text);
+                }
+
+                // Control buttons
+                document.getElementById('complete-btn').disabled = !canComplete;
+                document.getElementById('skip-btn').disabled = !hasSchedule || isLastActivity || isRunning; // Can't skip while running
+                document.getElementById('previous-btn').disabled = !canGoBack || isRunning; // Can't go back while running
+                document.getElementById('restart-btn').disabled = !hasSchedule || isRunning; // Can't restart while running
+            }
+
+            // SCHEDULE GENERATION
+            generateSchedule() {
+                this.resetState();
+                this.config = this.getConfig();
+                this.activities = [];
+                
+                const now = new Date();
+                let currentTime = new Date(now.getTime() + 2 * 60 * 1000);
+
+                // Session setup
+                this.addActivity(currentTime, 'Session Setup', 'Workstation ergonomics check and warm-up stretches', 'exercise', 5, ['Neck stretches (scalene focus)', 'Shoulder rolls', 'Workstation adjustment']);
+                currentTime.setMinutes(currentTime.getMinutes() + 5);
+
+                // Generate sessions
+                for (let session = 1; session <= this.config.scheduleDuration; session++) {
+                    // Work session
+                    this.addActivity(currentTime, `Work Session ${session}`, 'Focused development time - maintain good posture', 'work', this.config.workBlock);
+                    currentTime.setMinutes(currentTime.getMinutes() + this.config.workBlock);
+
+                    // Break/Workout (except for last session)
+                    if (session < this.config.scheduleDuration) {
+                        const isIntensive = session % this.config.intensiveInterval === 0;
+                        
+                        if (isIntensive) {
+                            // Intensive workout
+                            const exercises = this.generateIntensiveExercises();
+                            this.addActivity(currentTime, `Workout Break`, 'High-intensity strength and mobility session', 'intensive', this.config.exerciseBreak, exercises);
+                            currentTime.setMinutes(currentTime.getMinutes() + this.config.exerciseBreak);
+                            
+                            // Recovery break (auto-advance from workout)
+                            this.addActivity(currentTime, 'Recovery Break', 'Hydrate, breathe, and recover from workout session', 'break', this.config.restBreak, null, true);
+                            currentTime.setMinutes(currentTime.getMinutes() + this.config.restBreak);
+                        } else {
+                            // Regular stretch break
+                            const exercises = this.getRandomExercises(this.exercises.regular, 2);
+                            this.addActivity(currentTime, 'Stretch Break', 'Posture relief and light movement', 'exercise', this.config.stretchBreak, exercises);
+                            currentTime.setMinutes(currentTime.getMinutes() + this.config.stretchBreak);
+                            
+                            // Recovery break (auto-advance from stretch)
+                            this.addActivity(currentTime, 'Recovery Break', 'Hydrate and rest', 'break', this.config.restBreak, null, true);
+                            currentTime.setMinutes(currentTime.getMinutes() + this.config.restBreak);
+                        }
+                    }
+                }
+
+                // Session completion
+                this.addActivity(currentTime, 'Session Completion', 'Cool down stretches and workstation cleanup', 'exercise', 10, ['Full body stretch', 'Deep breathing exercises', 'Neck and shoulder relief', 'Workstation cleanup']);
+                currentTime.setMinutes(currentTime.getMinutes() + 10);
+
+                this.state.hasSchedule = true;
+                this.renderSchedule();
+                this.updateButtonStates();
+                this.calculateAndShowStats();
+            }
+
+            addActivity(time, name, description, type, duration, exercises = null, autoAdvance = false) {
+                this.activities.push({
+                    time: this.formatTime(time),
+                    name,
+                    description,
+                    type,
+                    duration,
+                    exercises,
+                    autoAdvance
+                });
+            }
+
+            generateIntensiveExercises() {
+                const categories = Object.keys(this.exercises.intensive);
+                const exercises = [];
+                
+                ['strength', 'core'].forEach(category => {
+                    const categoryExercises = this.exercises.intensive[category];
+                    exercises.push(categoryExercises[Math.floor(Math.random() * categoryExercises.length)]);
+                });
+                
+                const additionalCount = Math.floor(Math.random() * 3) + 2;
+                for (let i = 0; i < additionalCount; i++) {
+                    const category = categories[Math.floor(Math.random() * categories.length)];
+                    const exercise = this.exercises.intensive[category][Math.floor(Math.random() * this.exercises.intensive[category].length)];
+                    if (!exercises.includes(exercise)) {
+                        exercises.push(exercise);
+                    }
+                }
+                
+                return exercises;
+            }
+
+            getRandomExercises(exerciseArray, count) {
+                return [...exerciseArray].sort(() => 0.5 - Math.random()).slice(0, count);
+            }
+
+            calculateAndShowStats() {
+                let workTime = 0;           // Work sessions
+                let breakTime = 0;          // Recovery breaks only
+                let exerciseTime = 0;       // Stretches + setup/completion
+                let workoutTime = 0;        // Intensive workouts
+                let totalDuration = 0;      // Sum of all activities
+                
+                this.activities.forEach(activity => {
+                    totalDuration += activity.duration;
+                    
+                    switch(activity.type) {
+                        case 'work':
+                            workTime += activity.duration;
+                            break;
+                        case 'break':
+                            breakTime += activity.duration;
+                            break;
+                        case 'exercise':
+                            exerciseTime += activity.duration;
+                            break;
+                        case 'intensive':
+                            workoutTime += activity.duration;
+                            break;
+                    }
+                });
+                
+                const totalPhysicalActivity = exerciseTime + workoutTime;
+                
+                this.updateStats(workTime, breakTime, totalPhysicalActivity, totalDuration);
+                this.showNotification(`Schedule generated! ${this.config.scheduleDuration} sessions planned (${Math.floor(totalDuration / 60)}h ${totalDuration % 60}m total).`, 'success');
+            }
+
+            updateStats(workMinutes, breakMinutes, workoutMinutes, totalDuration) {
+                const formatTime = (minutes) => `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
+                
+                document.getElementById('total-work').textContent = formatTime(workMinutes);
+                document.getElementById('total-break').textContent = formatTime(breakMinutes);
+                document.getElementById('total-exercise').textContent = formatTime(workoutMinutes);
+                document.getElementById('total-duration').textContent = formatTime(totalDuration);
+                document.getElementById('schedule-stats').style.display = 'block';
+            }
+
+            formatTime(date) {
+                return date.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+            }
+
+            renderSchedule() {
+                const container = document.getElementById('schedule-container');
+                container.innerHTML = '';
+                
+                this.activities.forEach((activity, index) => {
+                    const item = document.createElement('div');
+                    item.className = `schedule-item ${activity.type}`;
+                    item.id = `activity-${index}`;
+                    
+                    if (index < this.state.currentActivityIndex) {
+                        item.classList.add('completed');
+                    } else if (index === this.state.currentActivityIndex) {
+                        item.classList.add('active');
+                    }
+                    
+                    item.onclick = () => this.jumpToActivity(index);
+                    
+                    const physicalActivityText = activity.exercises ? 
+                        `<br><small style="color: #e74c3c;">💪 ${activity.exercises.join(' • ')}</small>` : '';
+                    
+                    const statusIcon = index < this.state.currentActivityIndex ? '✅ ' : 
+                                     index === this.state.currentActivityIndex ? '▶️ ' : '';
+                    
+                    item.innerHTML = `
+                        <div class="activity-info">
+                            <div class="activity-name">${statusIcon}${activity.name}</div>
+                            <div class="activity-description">${activity.description}${physicalActivityText}</div>
+                        </div>
+                        <div class="activity-time-info">
+                            <div class="activity-time">${activity.time}</div>
+                            <div class="activity-duration">${activity.duration} min</div>
+                        </div>
+                    `;
+                    
+                    container.appendChild(item);
+                });
+                
+                this.scrollToCurrentActivity();
+            }
+
+            scrollToCurrentActivity(delay = 0) {
+                if (!this.state.hasSchedule || this.activities.length === 0) return;
+                
+                setTimeout(() => {
+                    const currentActivityElement = document.getElementById(`activity-${this.state.currentActivityIndex}`);
+                    if (currentActivityElement) {
+                        currentActivityElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }, delay);
+            }
+
+            // TIMER AND COUNTDOWN
+            updateTime() {
+                const now = new Date();
+                document.getElementById('current-time').textContent = now.toLocaleTimeString('en-US', { 
+                    hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' 
+                });
+                
+                if (this.state.isRunning && this.state.hasSchedule) {
+                    this.updateCountdown();
+                } else {
+                    this.updateButtonStates();
+                }
+            }
+
+            updateCountdown() {
+                const now = new Date();
+                const currentActivity = this.activities[this.state.currentActivityIndex];
+                
+                if (!currentActivity || !this.state.startTime) return;
+                
+                document.getElementById('next-activity').textContent = `Current: ${currentActivity.name}`;
+                
+                const elapsed = this.state.elapsedSeconds + Math.floor((now - this.state.startTime) / 1000);
+                const total = currentActivity.duration * 60;
+                const remaining = total - elapsed;
+                
+                // Update progress
+                const progress = Math.min(100, (elapsed / total) * 100);
+                document.getElementById('progress-fill').style.width = `${progress}%`;
+                
+                // Update button states in real-time (especially complete button)
+                this.updateButtonStates();
+                
+                // Warning at 30 seconds
+                if (remaining === 30 && !this.state.warningPlayed) {
+                    this.playSound([440], 200);
+                    this.state.warningPlayed = true;
+                }
+                
+                if (remaining > 0) {
+                    const minutes = Math.floor(remaining / 60);
+                    const seconds = remaining % 60;
+                    document.getElementById('countdown').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                } else {
+                    document.getElementById('countdown').textContent = 'Time to switch!';
+                    document.getElementById('progress-fill').style.width = '100%';
+                    
+                    if (!this.state.completionSoundPlayed) {
+                        this.playActivitySound(currentActivity.type);
+                        this.state.completionSoundPlayed = true;
+                    }
+                    
+                    // Check if next activity is auto-advance (recovery break)
+                    const nextActivityIndex = this.state.currentActivityIndex + 1;
+                    const nextActivity = this.activities[nextActivityIndex];
+                    
+                    if (nextActivity && nextActivity.autoAdvance) {
+                        // Auto-advance immediately for recovery breaks
+                        if (remaining <= -2) {
+                            this.moveToNextActivity();
+                        }
+                    } else {
+                        // Auto-advance after 30 seconds for regular activities
+                        if (remaining < -30) {
+                            this.moveToNextActivity();
+                        }
+                    }
+                }
+            }
+
+            // AUDIO
+            playSound(frequencies, duration = 300) {
+                if (!this.soundEnabled || !this.audioContext) return;
+                
+                if (this.audioContext.state === 'suspended') {
+                    this.audioContext.resume();
+                }
+                
+                frequencies.forEach((freq, index) => {
+                    setTimeout(() => {
+                        const oscillator = this.audioContext.createOscillator();
+                        const gainNode = this.audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(this.audioContext.destination);
+                        oscillator.frequency.setValueAtTime(freq, this.audioContext.currentTime);
+                        oscillator.type = 'sine';
+                        
+                        gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration / 1000);
+                        
+                        oscillator.start(this.audioContext.currentTime);
+                        oscillator.stop(this.audioContext.currentTime + duration / 1000);
+                    }, index * (duration + 100));
+                });
+            }
+
+            playActivitySound(type) {
+                const sounds = {
+                    work: [440, 554, 659],
+                    break: [659, 554, 440],
+                    exercise: [880, 880],
+                    intensive: [880, 1108, 880]
+                };
+                this.playSound(sounds[type] || sounds.work);
+            }
+
+            // NAVIGATION
+            recomputeScheduleTimes() {
+                if (!this.state.hasSchedule || this.activities.length === 0) return;
+                
+                const now = new Date();
+                let currentTime;
+                
+                // Determine the starting point for time calculations
+                if (this.state.isRunning && this.state.startTime) {
+                    // If timer is running, calculate current activity's remaining time
+                    const elapsed = this.state.elapsedSeconds + Math.floor((now - this.state.startTime) / 1000);
+                    const currentActivity = this.activities[this.state.currentActivityIndex];
+                    const remaining = Math.max(0, currentActivity.duration * 60 - elapsed);
+                    
+                    // Current activity ends at now + remaining time
+                    currentTime = new Date(now.getTime() + remaining * 1000);
+                } else {
+                    // If timer is not running, start from now
+                    currentTime = new Date(now);
+                    
+                    // Update current activity time if it hasn't started yet
+                    if (this.state.currentActivityIndex < this.activities.length) {
+                        this.activities[this.state.currentActivityIndex].time = this.formatTime(currentTime);
+                        currentTime.setMinutes(currentTime.getMinutes() + this.activities[this.state.currentActivityIndex].duration);
+                    }
+                }
+                
+                // Update all future activities
+                for (let i = this.state.currentActivityIndex + 1; i < this.activities.length; i++) {
+                    this.activities[i].time = this.formatTime(currentTime);
+                    currentTime.setMinutes(currentTime.getMinutes() + this.activities[i].duration);
+                }
+                
+                this.renderSchedule();
+            }
+
+            moveToNextActivity() {
+                if (!this.validateScheduleExists()) return;
+
+                if (this.state.currentActivityIndex < this.activities.length - 1) {
+                    this.state.currentActivityIndex++;
+                    this.resetActivityState();
+                    
+                    if (this.state.isRunning) {
+                        this.startActivityTimer();
+                    }
+                    
+                    this.recomputeScheduleTimes();
+                    this.updateButtonStates();
+                    this.scrollToCurrentActivity(300);
+                    
+                    const activity = this.activities[this.state.currentActivityIndex];
+                    this.showNotification(`Starting: ${activity.name}`, 'success');
+                    this.playActivitySound(activity.type);
+                    this.sendBrowserNotification(activity.name);
+                } else {
+                    this.completeSession();
+                }
+            }
+
+            completeSession() {
+                this.showNotification('Session completed! Great job!', 'success');
+                this.playSound([523, 659, 784]);
+                this.state.isRunning = false;
+                this.updateButtonState('timer-btn', 'btn-secondary', '#icon-check', ' Session Complete', true);
+                this.updateButtonStates();
+            }
+
+            sendBrowserNotification(message) {
+                if (Notification.permission === 'granted') {
+                    new Notification('Health Planner Alert', {
+                        body: `Time for: ${message}`,
+                        icon: '🎯'
+                    });
+                }
+            }
+
+            // CONTROL METHODS
+            toggleTimer() {
+                if (!this.validateScheduleExists()) return;
+
+                this.state.isRunning = !this.state.isRunning;
+                
+                if (this.state.isRunning) {
+                    if (this.state.pausedTime && this.state.startTime) {
+                        this.state.elapsedSeconds += Math.floor((this.state.pausedTime - this.state.startTime) / 1000);
+                        this.state.pausedTime = null;
+                        this.state.startTime = new Date();
+                    } else {
+                        this.startActivityTimer();
+                    }
+                    
+                    this.showNotification(this.state.elapsedSeconds > 0 ? 'Routine resumed!' : 'Health routine started!', 'success');
+                    
+                    if (Notification.permission === 'default') {
+                        Notification.requestPermission();
+                    }
+                } else {
+                    this.state.pausedTime = new Date();
+                    this.showNotification('Routine paused', 'warning');
+                }
+                
+                this.updateButtonStates();
+            }
+
+            markComplete() {
+                if (!this.validateScheduleExists()) return;
+
+                const currentActivity = this.activities[this.state.currentActivityIndex];
+                if (currentActivity && currentActivity.autoAdvance) {
+                    this.moveToNextActivity();
+                    return;
+                }
+
+                this.moveToNextActivity();
+            }
+
+            skipActivity() {
+                if (!this.validateScheduleExists()) return;
+                
+                if (this.state.isRunning) {
+                    this.showNotification('Pause the timer before skipping activities!', 'warning');
+                    return;
+                }
+                
+                if (this.state.currentActivityIndex < this.activities.length - 1) {
+                    this.state.currentActivityIndex++;
+                    this.resetActivityState();
+                    this.state.startTime = null;
+                    this.recomputeScheduleTimes();
+                    this.updateButtonStates();
+                    this.scrollToCurrentActivity();
+                    
+                    const activity = this.activities[this.state.currentActivityIndex];
+                    this.showNotification(`Skipped to: ${activity.name}`, 'warning');
+                    this.playActivitySound(activity.type);
+                } else {
+                    this.showNotification('Cannot skip - already at the last activity!', 'warning');
+                }
+            }
+
+            goToPreviousActivity() {
+                if (!this.validateScheduleExists()) return;
+
+                if (this.state.isRunning) {
+                    this.showNotification('Pause the timer before navigating!', 'warning');
+                    return;
+                }
+
+                if (this.state.currentActivityIndex > 0) {
+                    this.state.currentActivityIndex--;
+                    this.resetActivityState();
+                    this.state.startTime = null;
+                    this.recomputeScheduleTimes();
+                    this.updateButtonStates();
+                    this.scrollToCurrentActivity();
+                    
+                    const activity = this.activities[this.state.currentActivityIndex];
+                    this.showNotification(`Moved to: ${activity.name}`, 'success');
+                    this.playActivitySound(activity.type);
+                } else {
+                    this.showNotification('Already at the start of the schedule!', 'warning');
+                }
+            }
+
+            restartCurrentActivity() {
+                if (!this.validateScheduleExists()) return;
+
+                if (this.state.isRunning) {
+                    this.showNotification('Pause the timer before restarting!', 'warning');
+                    return;
+                }
+
+                if (this.validateCurrentActivity()) {
+                    this.resetActivityState();
+                    this.state.startTime = null;
+                    this.recomputeScheduleTimes();
+                    this.scrollToCurrentActivity();
+                    
+                    const activity = this.activities[this.state.currentActivityIndex];
+                    this.showNotification(`Reset: ${activity.name}`, 'success');
+                    this.playActivitySound(activity.type);
+                } else {
+                    this.showNotification('Invalid activity!', 'error');
+                }
+            }
+
+            jumpToActivity(index) {
+                if (!this.validateScheduleExists()) return;
+
+                if (this.state.isRunning) {
+                    this.showNotification('Pause the timer before jumping to activities!', 'warning');
+                    return;
+                }
+
+                if (index >= 0 && index < this.activities.length) {
+                    this.state.currentActivityIndex = index;
+                    this.resetActivityState();
+                    this.state.startTime = null;
+                    this.recomputeScheduleTimes();
+                    this.updateButtonStates();
+                    this.scrollToCurrentActivity();
+                    
+                    const activity = this.activities[this.state.currentActivityIndex];
+                    this.showNotification(`Jumped to: ${activity.name}`, 'success');
+                    this.playActivitySound(activity.type);
+                }
+            }
+
+            toggleSound() {
+                this.soundEnabled = !this.soundEnabled;
+                const iconId = this.soundEnabled ? '#icon-volume-on' : '#icon-volume-off';
+                const text = this.soundEnabled ? ' Sound On' : ' Sound Off';
+                
+                this.updateButtonState('sound-toggle', 'btn-secondary', iconId, text);
+                this.showNotification(this.soundEnabled ? 'Sound notifications enabled' : 'Sound notifications disabled', 'success');
+            }
+
+            showNotification(message, type = 'success') {
+                const notification = document.getElementById('notification');
+                
+                if (this.notificationTimeout) {
+                    clearTimeout(this.notificationTimeout);
+                }
+                
+                notification.innerHTML = `
+                    <div class="notification-content">${message}</div>
+                    <button class="notification-close" onclick="closeNotification()">
+                        <svg class="icon icon-sm">
+                            <use href="#icon-close"></use>
+                        </svg>
+                    </button>
+                `;
+                notification.className = `notification ${type} show`;
+                
+                this.notificationTimeout = setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 8000);
+            }
+        }
+
+        // Global instance and functions
+        let planner;
+
+        // Theme Management
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'system';
+            setTheme(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = localStorage.getItem('theme') || 'system';
+            let newTheme;
+            
+            if (currentTheme === 'system') {
+                newTheme = 'light';
+            } else if (currentTheme === 'light') {
+                newTheme = 'dark';
+            } else {
+                newTheme = 'system';
+            }
+            
+            setTheme(newTheme);
+        }
+
+        function setTheme(theme) {
+            localStorage.setItem('theme', theme);
+            
+            const themeIcon = document.getElementById('theme-icon').querySelector('use');
+            const rootElement = document.documentElement;
+            
+            if (theme === 'system') {
+                themeIcon.setAttribute('href', '#icon-computer');
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    rootElement.setAttribute('data-theme', 'dark');
+                } else {
+                    rootElement.setAttribute('data-theme', 'light');
+                }
+            } else if (theme === 'dark') {
+                themeIcon.setAttribute('href', '#icon-sun');
+                rootElement.setAttribute('data-theme', 'dark');
+            } else {
+                themeIcon.setAttribute('href', '#icon-moon');
+                rootElement.setAttribute('data-theme', 'light');
+            }
+        }
+
+        // Listen for system theme changes
+        if (window.matchMedia) {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'system') {
+                    setTheme('system');
+                }
+            });
+        }
+
+        // Sheet Management
+        function toggleConfigSheet() {
+            const sheet = document.getElementById('config-sheet');
+            const contentArea = document.getElementById('content-area');
+            const toggleIcon = document.getElementById('sheet-toggle-icon').querySelector('use');
+            
+            const isCurrentlyCollapsed = sheet.classList.contains('collapsed');
+            
+            if (isCurrentlyCollapsed) {
+                // Expanding
+                sheet.classList.remove('collapsed');
+                contentArea.classList.remove('sheet-collapsed');
+                toggleIcon.setAttribute('href', '#icon-close');
+                localStorage.setItem('configSheetCollapsed', 'false');
+            } else {
+                // Collapsing
+                sheet.classList.add('collapsed');
+                contentArea.classList.add('sheet-collapsed');
+                toggleIcon.setAttribute('href', '#icon-menu');
+                localStorage.setItem('configSheetCollapsed', 'true');
+            }
+        }
+
+        function initializeSheet() {
+            const isCollapsed = localStorage.getItem('configSheetCollapsed') === 'true';
+            const sheet = document.getElementById('config-sheet');
+            const contentArea = document.getElementById('content-area');
+            const toggleIcon = document.getElementById('sheet-toggle-icon').querySelector('use');
+            
+            if (isCollapsed) {
+                sheet.classList.add('collapsed');
+                contentArea.classList.add('sheet-collapsed');
+                toggleIcon.setAttribute('href', '#icon-menu');
+            } else {
+                sheet.classList.remove('collapsed');
+                contentArea.classList.remove('sheet-collapsed');
+                toggleIcon.setAttribute('href', '#icon-close');
+            }
+        }
+
+        // Global function wrappers
+        function generateSchedule() { planner.generateSchedule(); }
+        function toggleTimer() { planner.toggleTimer(); }
+        function markComplete() { planner.markComplete(); }
+        function skipActivity() { planner.skipActivity(); }
+        function goToPreviousActivity() { planner.goToPreviousActivity(); }
+        function restartCurrentActivity() { planner.restartCurrentActivity(); }
+        function toggleSound() { planner.toggleSound(); }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeTheme();
+            initializeSheet();
+            planner = new HealthPlanner();
+        });
+
+        // Global notification close function
+        function closeNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.remove('show');
+            if (planner && planner.notificationTimeout) {
+                clearTimeout(planner.notificationTimeout);
+            }
+        }
+    </script>
+</body>
+</html>
