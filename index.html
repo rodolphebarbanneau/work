@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Developer Health Planner</title>
+    <title>Work Planner</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
     <style>
         :root {
@@ -909,8 +909,8 @@
                         </svg>
                     </button>
                     <div>
-                        <span class="header-title">🎯 Health Planner</span>
-                        <span class="header-subtitle">Intelligent Work-Life Balance</span>
+                        <span class="header-title">🎯 Work Planner</span>
+                        <span class="header-subtitle">Smart Work-Exercise Balance</span>
                     </div>
                 </div>
                 <div class="header-controls">
@@ -1680,7 +1680,7 @@
 
             sendBrowserNotification(message) {
                 if (Notification.permission === 'granted') {
-                    new Notification('Health Planner Alert', {
+                    new Notification('Work Planner Alert', {
                         body: `Time for: ${message}`,
                         icon: '🎯'
                     });
