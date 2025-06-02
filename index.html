@@ -34,25 +34,25 @@
 
         [data-theme="dark"] {
             /* Dark theme colors */
-            --background: 222.2 84% 4.9%;
+            --background: 220 13% 4%;
             --foreground: 210 40% 98%;
-            --card: 222.2 84% 4.9%;
+            --card: 220 13% 4%;
             --card-foreground: 210 40% 98%;
-            --popover: 222.2 84% 4.9%;
+            --popover: 220 13% 6%;
             --popover-foreground: 210 40% 98%;
             --primary: 217.2 91.2% 59.8%;
-            --primary-foreground: 222.2 84% 4.9%;
-            --secondary: 217.2 32.6% 17.5%;
+            --primary-foreground: 220 13% 4%;
+            --secondary: 220 14% 11%;
             --secondary-foreground: 210 40% 98%;
-            --muted: 217.2 32.6% 17.5%;
+            --muted: 220 14% 11%;
             --muted-foreground: 215 20.2% 65.1%;
-            --accent: 217.2 32.6% 17.5%;
+            --accent: 220 14% 11%;
             --accent-foreground: 210 40% 98%;
             --destructive: 0 62.8% 30.6%;
             --destructive-foreground: 210 40% 98%;
-            --border: 217.2 32.6% 17.5%;
-            --input: 217.2 32.6% 17.5%;
-            --ring: 224.3 76.3% 94.1%;
+            --border: 220 13% 18%;
+            --input: 220 14% 11%;
+            --ring: 217.2 91.2% 59.8%;
             --success: 142.1 70.6% 45.3%;
             --warning: 47.9 95.8% 53.1%;
             --info: 199.89 89.09% 48.04%;
@@ -504,8 +504,63 @@
             font-size: 2rem;
             font-weight: 700;
             color: hsl(var(--foreground));
+            margin-bottom: 1.5rem;
+            font-feature-settings: "tnum";
+        }
+
+        .current-activity-info {
+            margin-bottom: 1.5rem;
+        }
+
+        .activity-label {
+            font-size: 0.75rem;
+            color: hsl(var(--muted-foreground));
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .current-activity-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: hsl(var(--foreground));
+        }
+
+        .countdown-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .countdown-label {
+            font-size: 0.75rem;
+            color: hsl(var(--muted-foreground));
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .countdown-display {
+            font-size: 3rem;
+            color: hsl(var(--primary));
+            font-weight: 700;
             margin-bottom: 0.5rem;
             font-feature-settings: "tnum";
+            text-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+        }
+
+        .countdown-display.warning {
+            color: hsl(var(--warning));
+            text-shadow: 0 0 20px hsl(var(--warning) / 0.3);
+        }
+
+        .countdown-display.overtime {
+            color: hsl(var(--destructive));
+            text-shadow: 0 0 20px hsl(var(--destructive) / 0.3);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
 
         .next-activity {
@@ -524,17 +579,65 @@
 
         .progress-bar {
             width: 100%;
-            height: 4px;
+            height: 6px;
             background: hsl(var(--muted));
             overflow: hidden;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 3px;
         }
 
         .progress-fill {
             height: 100%;
-            background: hsl(var(--primary));
+            background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary)) 70%, hsl(var(--warning)));
             width: 0%;
             transition: width 0.5s ease;
+            border-radius: 3px;
+        }
+
+        .task-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid hsl(var(--border));
+        }
+
+        .nav-task {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .nav-label {
+            font-size: 0.625rem;
+            color: hsl(var(--muted-foreground));
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-task-name {
+            font-size: 0.75rem;
+            color: hsl(var(--foreground));
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .prev-task {
+            text-align: left;
+        }
+
+        .next-task {
+            text-align: right;
+        }
+
+        .nav-separator {
+            color: hsl(var(--muted-foreground));
+            font-weight: bold;
+            flex-shrink: 0;
         }
 
         .controls {
@@ -645,7 +748,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.5rem 0;
+            padding: 0.5rem;
             margin-bottom: 0.5rem;
             border-bottom: 1px solid hsl(var(--border));
             user-select: none;
@@ -653,8 +756,6 @@
 
         .collapsible-header:hover {
             background: hsl(var(--accent) / 0.5);
-            margin: 0 -0.5rem 0.5rem -0.5rem;
-            padding: 0.5rem;
         }
 
         .collapsible-content {
@@ -1006,11 +1107,35 @@
                     
                     <div class="timer-display">
                         <div class="current-time" id="current-time"></div>
-                        <div class="next-activity" id="next-activity">Generate schedule to start</div>
+                        
+                        <!-- Current Activity Info -->
+                        <div class="current-activity-info">
+                            <div class="activity-label">Current Activity</div>
+                            <div class="current-activity-name" id="current-activity-name">Generate schedule to start</div>
+                        </div>
+                        
+                        <!-- Prominent Countdown -->
+                        <div class="countdown-container">
+                            <div class="countdown-label">Time Remaining</div>
+                            <div class="countdown-display" id="countdown">--:--</div>
+                        </div>
+                        
                         <div class="progress-bar">
                             <div class="progress-fill" id="progress-fill"></div>
                         </div>
-                        <div class="countdown" id="countdown">--:--</div>
+                        
+                        <!-- Previous/Next Tasks -->
+                        <div class="task-navigation" id="task-navigation" style="display: none;">
+                            <div class="nav-task prev-task">
+                                <div class="nav-label">Previous</div>
+                                <div class="nav-task-name" id="prev-task-name">-</div>
+                            </div>
+                            <div class="nav-separator">•</div>
+                            <div class="nav-task next-task">
+                                <div class="nav-label">Next</div>
+                                <div class="nav-task-name" id="next-task-name">-</div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="controls">
@@ -1525,6 +1650,17 @@
                 if (this.state.isRunning && this.state.hasSchedule) {
                     this.updateCountdown();
                 } else {
+                    // Update task navigation even when not running
+                    if (this.state.hasSchedule) {
+                        const currentActivity = this.getCurrentActivity();
+                        if (currentActivity) {
+                            document.getElementById('current-activity-name').textContent = currentActivity.name;
+                        }
+                        this.updateTaskNavigation();
+                    } else {
+                        document.getElementById('current-activity-name').textContent = 'Generate schedule to start';
+                        document.getElementById('task-navigation').style.display = 'none';
+                    }
                     this.updateButtonStates();
                 }
             }
@@ -1535,7 +1671,9 @@
                 
                 if (!currentActivity || !this.state.startTime) return;
                 
-                document.getElementById('next-activity').textContent = `Current: ${currentActivity.name}`;
+                document.getElementById('current-activity-name').textContent = currentActivity.name;
+                
+                this.updateTaskNavigation();
                 
                 const elapsed = this.calculateElapsedTime();
                 const total = currentActivity.duration * 60;
@@ -1553,12 +1691,20 @@
                     this.state.warningPlayed = true;
                 }
                 
+                const countdownElement = document.getElementById('countdown');
+                
                 if (remaining > 0) {
                     const minutes = Math.floor(remaining / 60);
                     const seconds = remaining % 60;
-                    document.getElementById('countdown').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    countdownElement.className = 'countdown-display';
+                    if (remaining <= 30) {
+                        countdownElement.classList.add('warning');
+                    }
                 } else {
-                    document.getElementById('countdown').textContent = 'Time to switch!';
+                    countdownElement.textContent = 'Time to switch!';
+                    countdownElement.className = 'countdown-display overtime';
                     document.getElementById('progress-fill').style.width = '100%';
                     
                     if (!this.state.completionSoundPlayed) {
@@ -1577,6 +1723,35 @@
                             this.moveToNextActivity();
                         }
                     }
+                }
+            }
+
+            updateTaskNavigation() {
+                const taskNavigation = document.getElementById('task-navigation');
+                const prevTaskName = document.getElementById('prev-task-name');
+                const nextTaskName = document.getElementById('next-task-name');
+                
+                if (!this.state.hasSchedule || this.activities.length === 0) {
+                    taskNavigation.style.display = 'none';
+                    return;
+                }
+                
+                taskNavigation.style.display = 'flex';
+                
+                // Previous task
+                if (this.state.currentActivityIndex > 0) {
+                    const prevActivity = this.activities[this.state.currentActivityIndex - 1];
+                    prevTaskName.textContent = prevActivity.name;
+                } else {
+                    prevTaskName.textContent = '-';
+                }
+                
+                // Next task
+                if (this.state.currentActivityIndex < this.activities.length - 1) {
+                    const nextActivity = this.activities[this.state.currentActivityIndex + 1];
+                    nextTaskName.textContent = nextActivity.name;
+                } else {
+                    nextTaskName.textContent = 'Session Complete';
                 }
             }
 
